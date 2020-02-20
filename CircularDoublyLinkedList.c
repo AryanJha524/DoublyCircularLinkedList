@@ -2,138 +2,150 @@
 #include <stdlib.h>
 
 
-/*This program is written by: Aryan Jha */
+/*This program is written by: Aryan Jha
+   This program creates a user specified amount of nodes
+   as a circular doubly linked list. Then, the list is reversed so the last node
+   becomes the head. Finally, after reversing the order, the program deletes
+   nodes based off the iterative position the user entered until there is only
+   one node left. It will loop around the list if the iterative number is greater
+   than the number of nodes since its a circular list. Then it returns the surviving
+   node's data
+ */
 
 
-
-struct soldier{
-  int data;
-  struct soldier *next;
-  struct soldier *prev;
+struct node { //creates the struct for the node
+        int data;
+        struct node *next;
+        struct node *prev;
 };
 
-struct soldier* create_soldier (int sequence);
+struct node* create_node (int sequence);
 
 
-void enqueueSoldier (struct soldier * head, int i)
+void enqueuenode (struct node * head, int i)
 {
-  struct soldier * curSoldier = create_soldier(i);
-  struct soldier * lastSoldier;
-  if (head == NULL) //check if list is empty
-    {
-      curSoldier->next = curSoldier;
-      curSoldier->prev = curSoldier;
-      return;
-    }
-  else
-    {
-      lastSoldier = head->prev; //last solider will be previous of start in circle
-      curSoldier->next = head;
-      head->prev = curSoldier;
-      curSoldier->prev = lastSoldier;
-      lastSoldier->next = curSoldier;
-    }
+        struct node * curnode = create_node(i);
+        struct node * lastnode;
+        if (head == NULL) //check if list is empty
+        {
+                curnode->next = curnode;
+                curnode->prev = curnode;
+                return;
+        }
+        else
+        {
+                lastnode = head->prev; //last solider will be previous of start in circle
+                curnode->next = head;
+                head->prev = curnode;
+                curnode->prev = lastnode;
+                lastnode->next = curnode;
+        }
 
 }
 
 
-struct soldier* create_soldier (int sequence) // dynamic allocate mem for solider
+struct node* create_node (int sequence) // dynamic allocate mem for solider
 {
 
-  struct soldier * newSoldier = (struct soldier *)malloc(1*sizeof(struct soldier));
-  newSoldier->data = sequence;
-  newSoldier->next = NULL;
-  newSoldier->prev = NULL;
-  return newSoldier;
-
-}
-
-
-
-struct soldier* create_reverse_circle(int n) // create circular double linked list of n soliders in reverse order
-{
-  //MAYBE ERROR BELOW??
-  struct soldier * head = create_soldier(n);
-  for(int i=n; i>0; i--)
-    {
-      if(i==n) //first node, initialize the values
-      {
-        head->prev = head;
-        head->next = head;
-      }
-      else
-      {
-        enqueueSoldier(head, i);
-      }
-    }
-  return head;
-}
-
-
-
-struct soldier* rearrange_circle(struct soldier* head) // fix the order by swapping adjacent nodes
-{
-  struct soldier * temp = NULL;
-  struct soldier * curSoldier = head;
-  if (head->next == head || head == NULL) //checking for empty list or one node list
-    {
-      return head;
-    }
-  while (curSoldier->next != head)
-    {
-      temp = curSoldier->prev;
-      curSoldier->prev = curSoldier->next;
-      curSoldier->next = temp;
-      curSoldier = curSoldier->prev;
-    }
-    temp = curSoldier->prev;
-    curSoldier->prev = curSoldier->next;
-    curSoldier->next = temp;
-
-
-  return curSoldier;
-}
-
-
-
-void display(struct soldier* head) //prints the list
-{
-  struct soldier * temp = head;
-  while(temp->next != head)
-    {
-      printf("%d ", temp->data);
-      temp = temp->next;
-    }
-    printf("%d\n", temp->data);
+        struct node * newnode = (struct node *)malloc(1*sizeof(struct node));
+        newnode->data = sequence;
+        newnode->next = NULL;
+        newnode->prev = NULL;
+        return newnode;
 
 }
 
 
 
-int kill(struct soldier* head, int n, int k) //returns surviving solider
+struct node* create_reverse_circle(int n) // create circular double linked list of n soliders in reverse order
 {
-  int count = 1;
-  struct soldier * temp1;
-  struct soldier * t;
-  t = head;
+        struct node * head = create_node(n);
+        for(int i=n; i>0; i--)
+        {
+                if(i==n) //first node, initialize the values
+                {
+                        head->prev = head;
+                        head->next = head;
+                }
+                else
+                {
+                        enqueuenode(head, i);
+                }
+        }
+        return head;
+}
 
-  while(t->next != t)
-  {
-    if(count == k)
-      {
-        temp1 = t;
-        t = t->next;
-        temp1->prev->next = temp1->next;
-        temp1->next->prev = temp1->prev;
-        count = 1;
-      }
-    else
-      {
-          t=t->next;
-          count += 1;
-      }
-  }
-  return t->data;
+
+
+struct node* rearrange_circle(struct node* head) // fix the order by swapping adjacent nodes
+{
+        struct node * temp = NULL;
+        struct node * curnode = head;
+        if (head->next == head || head == NULL) //checking for empty list or one node list
+        {
+                return head;
+        }
+        while (curnode->next != head)
+        {
+                //swap the adjacent nodes
+                temp = curnode->prev;
+                curnode->prev = curnode->next;
+                curnode->next = temp;
+                curnode = curnode->prev;
+        }
+        //swap the last node that is skipped over by the while loop
+        temp = curnode->prev;
+        curnode->prev = curnode->next;
+        curnode->next = temp;
+
+
+        return curnode;
+}
+
+
+
+void display(struct node* head) //prints the list
+{
+        struct node * temp = head;
+        while(temp->next != head)
+        {
+                printf("%d-->", temp->data);
+                temp = temp->next;
+        }
+        printf("%d\n", temp->data);
+
+}
+
+
+
+int delete(struct node* head, int n, int k) //returns surviving solider
+{
+        int count = 1;
+        struct node * temp1;
+        struct node * t;
+        t = head;
+
+        while(t->next != t) //loop till there is only one node remaining
+        {
+                if(count == k) //if the iterative count is met, delete the node
+                {
+                        printf("Node: %d removed.\n", t->data);
+                        temp1 = t;
+                        t = t->next;
+                        temp1->prev->next = temp1->next;
+                        temp1->next->prev = temp1->prev;
+                        count = 1;
+                        printf("List is now: ");
+                        display(t);
+                }
+                else //continue looping, increment count to reach iterative number
+                {
+                        t=t->next;
+                        count += 1;
+                }
+
+        }
+        return t->data;
 
 }
 
@@ -141,18 +153,21 @@ int kill(struct soldier* head, int n, int k) //returns surviving solider
 
 int main()
 {
-  int num_soldiers, safe_pos;
+        int num_nodes, safe_pos;
+        printf("How many nodes would you like to enter: ");
+        scanf("%d", &num_nodes);
+        printf("\n");
+        printf("After what iteration would you like to delete the nodes: ");
+        scanf("%d", &safe_pos);
 
-  scanf("%d %d", &num_soldiers, &safe_pos);
+        struct node * headOfList = create_reverse_circle(num_nodes);
+        printf("List: ");
+        display(headOfList);
+        headOfList = rearrange_circle(headOfList);
+        printf("After ordering: ");
+        display(headOfList);
+        int survivor = delete(headOfList, num_nodes, safe_pos);
+        printf("Survived: %d\n", survivor);
 
-  struct soldier * headOfList = create_reverse_circle(num_soldiers);
-  printf("List: ");
-  display(headOfList);
-  headOfList = rearrange_circle(headOfList);
-  printf("After ordering: ");
-  display(headOfList);
-  int survivor = kill(headOfList, num_soldiers, safe_pos);
-  printf("Survived: %d\n", survivor);
-
-  return 0;
+        return 0;
 }

@@ -127,9 +127,10 @@ int delete(struct node* head, int n, int k) //returns surviving solider
 
         while(t->next != t) //loop till there is only one node remaining
         {
+                printf("Current Node: %d  Previous Node: %d  Next Node: %d\n", t->data, t->prev->data, t->next->data);
                 if(count == k) //if the iterative count is met, delete the node
                 {
-                        printf("Node: %d removed.\n", t->data);
+                        printf("Iterative position reached, current node: %d removed.\n", t->data);
                         temp1 = t;
                         t = t->next;
                         temp1->prev->next = temp1->next;
@@ -137,6 +138,7 @@ int delete(struct node* head, int n, int k) //returns surviving solider
                         count = 1;
                         printf("List is now: ");
                         display(t);
+                        printf("\n");
                 }
                 else //continue looping, increment count to reach iterative number
                 {
@@ -156,16 +158,22 @@ int main()
         int num_nodes, safe_pos;
         printf("How many nodes would you like to enter: ");
         scanf("%d", &num_nodes);
-        printf("\n");
         printf("After what iteration would you like to delete the nodes: ");
         scanf("%d", &safe_pos);
 
         struct node * headOfList = create_reverse_circle(num_nodes);
+        printf("\n");
         printf("List: ");
         display(headOfList);
+
         headOfList = rearrange_circle(headOfList);
         printf("After ordering: ");
         display(headOfList);
+
+        printf("\n");
+
+        printf("Starting to delete....\n");
+        printf("\n");
         int survivor = delete(headOfList, num_nodes, safe_pos);
         printf("Survived: %d\n", survivor);
 

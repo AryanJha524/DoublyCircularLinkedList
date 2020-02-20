@@ -161,6 +161,12 @@ int main()
         printf("After what iteration would you like to delete the nodes: ");
         scanf("%d", &safe_pos);
 
+        if(num_nodes == 0 || safe_pos == 0)
+          {
+            printf("Sorry, invalid input.\n")
+            exit(1);
+          }
+
         struct node * headOfList = create_reverse_circle(num_nodes);
         printf("\n");
         printf("List: ");
